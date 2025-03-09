@@ -1,6 +1,10 @@
 name: 'Build Krsistal mod'
 description: 'Compiles a Kristal mod into a TARGET_MOD engine build'
 runs:
-  using: python3
-  pre: pre.py
-  main: main.py
+  using: composite
+  steps:
+    - run: python3 $GITHUB_ACTION_PATH/pre.py
+      shell: bash
+    - run: python3 $GITHUB_ACTION_PATH/main.py
+      shell: bash
+
