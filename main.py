@@ -121,6 +121,12 @@ def main():
         shutil.copyfile(f"{mod_info['path']}/preview/splash_logo.png", "build/kristal/assets/sprites/kristal/title_logo.png")
     if os.path.exists(f"{mod_info['path']}/preview/splash_logo_heart.png"):
         shutil.copyfile(f"{mod_info['path']}/preview/splash_logo_heart.png", "build/kristal/assets/sprites/kristal/title_logo_heart.png")
+    if os.path.exists(f"{mod_info['path']}/preview/window_icon.png"):
+        shutil.copyfile(f"{mod_info['path']}/preview/window_icon.png", "build/kristal/icon.png")
+    if os.path.exists(f"{mod_info['path']}/preview/window_icon.ico"):
+        shutil.copyfile(f"{mod_info['path']}/preview/window_icon.ico", "build/kristal/icon.ico")
+    if os.path.exists(f"{mod_info['path']}/preview/window_icon.res"):
+        shutil.copyfile(f"{mod_info['path']}/preview/window_icon.res", "build/kristal/icon.res")
 
     print("Removing default mods")
     shutil.rmtree("build/kristal/mods/_testmod")
