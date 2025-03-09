@@ -23,15 +23,23 @@ class _IdentityReplace:
         return self._val
 
 def mkzip(source, destination):
-    if os.name == "nt":
-        shutil.move(shutil.make_archive(destination.strip(".zip").strip(".love") + "_tmp", "zip", source), destination)
-    else:
+    has_cmd = {}
+    if os.name == "posix":
+        for path in os.getenv("PATH").split(":"):
+            try:
+                for name in os.listdir(path):
+                    has_cmd[name] = True
+            except FileNotFoundError: pass
+    if "zip" in has_cmd:
         args = ["env", "-C", source, "zip", "-r", os.path.relpath(path=destination, start=source)]
         for file in os.listdir(source):
             if file != ".git":
                 args.append(f'.{os.path.sep}{file}')
         
         subprocess.run(args=args)
+    else:
+        print("shutil making archive in "+destination+" from "+source)
+        shutil.move(shutil.make_archive(destination.strip(".zip").strip(".love") + "_tmp", "zip", source), destination)
 
 class Version:
     def __init__(self, s):
