@@ -3,6 +3,7 @@ import os
 import shutil
 import subprocess
 import json5 as json
+import grope
 
 from pe_tools import parse_pe, IMAGE_DIRECTORY_ENTRY_RESOURCE
 from pe_tools.rsrc import parse_pe_resources, pe_resources_prepack, parse_prelink_resources, KnownResourceTypes
@@ -93,9 +94,31 @@ def prepare_kristal():
     shutil.copytree("kristal", "build/kristal")
 
 mod_info = None
-def patch_icon():
-    print("(Not yet implemented)")
-    shutil.copy("build/kristal_noicon.exe", "build/mod-win/"+mod_info['id']+".exe")
+def patch_metadata():
+    print("(Icons not yet implemented)")
+
+    fin = open(os.path.join("build", "kristal_noicon.exe"), 'rb')
+    pe = parse_pe(grope.wrap_io(fin))
+    global resources
+    resources = pe.parse_resources()
+    
+    setInfo("InternalName", "Kristal")
+    setInfo("LegalCopyright", "Copyright © 2024 Kristal Team")
+    windows_ver = Version(mod_info['version'] if 'version' in mod_info else "0.0.0").format()
+    setInfo("FileVersion", windows_ver)
+    setInfo("ProductVersion", windows_ver)
+    setInfo("FileDescription", mod_info['subtitle'] if 'subtitle' in mod_info else "A DELTARUNE fangame")
+    if "windowsMetadata" in mod_info:
+        for key, value in mod_info['windowsMetadata'].items():
+            setInfo(key, value)
+
+
+    prepacked = pe_resources_prepack(resources)
+    addr = pe.resize_directory(IMAGE_DIRECTORY_ENTRY_RESOURCE, prepacked.size)
+    pe.set_directory(IMAGE_DIRECTORY_ENTRY_RESOURCE, prepacked.pack(addr))
+
+    with open(os.path.join("build/mod-win/"+mod_info['id']+".exe"), 'wb') as fout:
+        grope.dump(pe.to_blob(), fout)
 
 def main():
     prepare_kristal()
@@ -147,8 +170,8 @@ def main():
     os.remove("build/mod-win/love.exe")
     os.remove("build/mod-win/lovec.exe")
 
-    print("Patching in icon")
-    patch_icon()
+    print("Patching in metadata")
+    patch_metadata()
 
     print(f"Creating output/{mod_info['id']}-win.zip")
     shutil.make_archive(f"output/{mod_info['id']}-win", "zip", "build/mod-win", "")
