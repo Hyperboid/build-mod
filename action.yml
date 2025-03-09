@@ -1,4 +1,4 @@
-name: 'Build Krsistal mod'
+name: 'Build Kristal mod'
 description: 'Compiles a Kristal mod into a TARGET_MOD engine build'
 runs:
   using: composite
