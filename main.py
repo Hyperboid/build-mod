@@ -22,6 +22,9 @@ class _IdentityReplace:
     def __call__(self, s):
         return self._val
 
+def mkzip(source, destination):
+    shutil.move(shutil.make_archive(destination.strip(".zip").strip(".love") + "_tmp", "zip", source), destination)
+
 class Version:
     def __init__(self, s):
         s = s.strip("-beta")
@@ -156,11 +159,10 @@ def main():
     shutil.rmtree("build/kristal/mods/example")
 
     print(f"Creating love file at output/{mod_info['id']}.love")
-    shutil.make_archive("output/kristal", "zip", "build/kristal", "")
-    shutil.move("output/kristal.zip", f"output/{mod_info['id']}.love")
+    mkzip("build/kristal", f"output/{mod_info['id']}.love")
 
     print(f"Copying mod to output/{mod_info['id']}-kristal.zip")
-    shutil.make_archive(f"output/{mod_info['id']}-kristal", "zip", "mod", "")
+    mkzip("mod", f"output/{mod_info['id']}-kristal.zip")
     
     print(f"Creating windows build at build/kristal_noicon.exe")
     shutil.copytree("love-11.5-win64", "build/mod-win")
@@ -175,6 +177,7 @@ def main():
 
     print(f"Creating output/{mod_info['id']}-win.zip")
     shutil.make_archive(f"output/{mod_info['id']}-win", "zip", "build/mod-win", "")
+    mkzip("build/mod-win", f"output/{mod_info['id']}-win.zip")
 
     print("All done!")
 
