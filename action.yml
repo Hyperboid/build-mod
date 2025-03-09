@@ -1,0 +1,6 @@
+name: 'Build Krsistal mod'
+description: 'Compiles a Kristal mod into a TARGET_MOD engine build'
+runs:
+  using: python3
+  pre: pre.py
+  main: main.py
